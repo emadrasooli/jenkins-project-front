@@ -73,6 +73,7 @@ pipeline {
       steps {
         echo "Deploy step is optional — you can pull and run this image on target servers."
         // Example (commented) to run on same server:
+        // add a new commit on main branch to test deployment
         // sh "docker rm -f my-nextjs-app || true"
         // sh "docker run -d --name my-nextjs-app -p 80:3000 ${IMAGE_REPO}:latest"
       }
