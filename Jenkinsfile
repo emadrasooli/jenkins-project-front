@@ -89,3 +89,5 @@ pipeline {
     }
   }
 }
+
+// example for check Jenkins
