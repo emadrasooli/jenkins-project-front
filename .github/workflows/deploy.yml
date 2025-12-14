@@ -1,9 +1,8 @@
-name: Run Build
+name: Run Deploy
 
 on:
-  pull_request:
+  push:
     branches: [main]
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -40,3 +39,23 @@ jobs:
 
       - name: Build project
         run: yarn build
+
+        # Build Docker image and push to registry
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t myapp:${{ github.sha }} .
+
+      - name: Create local image directory
+        run: |
+          mkdir -p /opt/docker-images
+
+      - name: Save Docker image to local directory
+        run: |
+          docker save myapp:${{ github.sha }} \
+            -o /opt/docker-images/myapp-${{ github.sha }}.tar
+
+      - name: Verify image file
+        run: |
+          ls -lh /opt/docker-images
