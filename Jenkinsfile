@@ -6,6 +6,7 @@ pipeline {
     IMAGE_REPO = "${REGISTRY}/jenkins-project-front"
     NODE_VERSION = "24"
     YARN_VERSION = "4.12.0"
+    IS_PR = "${env.CHANGE_ID}"
   }
 
   options {
@@ -46,19 +47,34 @@ pipeline {
       }
     }
 
+        stage('PR Validation Info') {
+      when {
+        expression { env.CHANGE_ID != null }
+      }
+      steps {
+        echo "✅ PR #${env.CHANGE_ID} validated successfully"
+      }
+    }
+
     stage('Docker Build') {
+      when {
+        branch 'main'
+      }
       steps {
         script {
           def tag = "${IMAGE_REPO}:${COMMIT}"
           def latest = "${IMAGE_REPO}:latest"
           sh "docker build --pull -t ${tag} ."
           sh "docker tag ${tag} ${latest}"
-          sh "docker images --format 'table {{.Repository}}\\t{{.Tag}}\\t{{.Size}}' | grep ${IMAGE_REPO} || true"
         }
       }
     }
 
+
     stage('Docker Push to Local Registry') {
+      when {
+        branch 'main'
+      }
       steps {
         script {
           sh """
@@ -70,8 +86,12 @@ pipeline {
     }
 
     stage('Optional Deploy') {
+      when {
+        branch 'main'
+      }
       steps {
         echo "Deploy step is optional — you can pull and run this image on target servers."
+        echo "Image available: ${IMAGE_REPO}:latest"
         // Example (commented) to run on same server:
         // add a new commit on main branch to test deployment
         // sh "docker rm -f my-nextjs-app || true"
