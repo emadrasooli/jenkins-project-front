@@ -10,6 +10,9 @@ export default function Home() {
         centuries, but also the leap into electronic typesetting, remaining
         essentially unchanged. It was popularised in the 1960s with the release
       </p>
+      <button className="mt-6 text-black bg-white py-2 px-4 rounded-xl cursor-pointer hover:bg-gray-200 transition">
+        Learn more
+      </button>
     </div>
   );
 }
